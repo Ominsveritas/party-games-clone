@@ -25,4 +25,5 @@ export const GAME_COMPONENTS: Record<string, ComponentType<GameProps>> = {
   beopardy: Beopardy,
   "two-truths": TwoTruths,
   punchline: Punchline,
+  "keyboard-zen": KeyboardZen,
 };
