@@ -52,5 +52,14 @@
     "accent": "#19c37d",
     "minPlayers": 2,
     "status": "soon"
+  },
+  {
+    "id": "keyboard-zen",
+    "name": "Keyboard Zen",
+    "blurb": "Type the keys as they appear. One slip resets you. How far can you flow?",
+    "emoji": "⌨️",
+    "accent": "#22d3ee",
+    "minPlayers": 1,
+    "status": "live"
   }
 ]

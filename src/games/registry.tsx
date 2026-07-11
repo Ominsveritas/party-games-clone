@@ -8,6 +8,7 @@ import Disordered from "./disordered/Disordered";
 import Beopardy from "./beopardy/Beopardy";
 import TwoTruths from "./twotruths/TwoTruths";
 import Punchline from "./punchline/Punchline";
+import KeyboardZen from "./keyboardzen/KeyboardZen";
 
 export interface GameProps {
   socket: Socket;
@@ -24,4 +25,5 @@ export const GAME_COMPONENTS: Record<string, ComponentType<GameProps>> = {
   beopardy: Beopardy,
   "two-truths": TwoTruths,
   punchline: Punchline,
+  "keyboard-zen": KeyboardZen,
 };
