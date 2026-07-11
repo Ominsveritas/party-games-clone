@@ -25,3 +25,127 @@ body {
 * {
   box-sizing: border-box;
 }
+
+/* ------------------------------------------------------------------ *
+ * Light theme design system.
+ *
+ * Scoped to `.theme-light` so it only affects surfaces that opt in
+ * (currently the home page) — the room / in-game screens stay dark.
+ * Consume these via the `light-*` utility classes below or with
+ * `[color:var(--...)]` / arbitrary Tailwind values.
+ * ------------------------------------------------------------------ */
+.theme-light {
+  /* Page + surfaces */
+  --l-bg: #f6f5fb;
+  --l-surface: #ffffff;
+  --l-surface-2: #f1eff9;
+  --l-surface-hover: #faf9ff;
+
+  /* Borders */
+  --l-border: #e6e2f2;
+  --l-border-strong: #d5cfe8;
+
+  /* Text */
+  --l-text: #1c1633;
+  --l-text-muted: #5b5470;
+  --l-text-subtle: #8a83a3;
+
+  /* Accent (violet) */
+  --l-accent: #6d3bf5;
+  --l-accent-strong: #5a2fd6;
+  --l-accent-soft: #ede8ff;
+
+  color: var(--l-text);
+  background:
+    radial-gradient(1200px 600px at 80% -10%, rgba(124, 92, 255, 0.14), transparent 60%),
+    radial-gradient(900px 500px at 0% 110%, rgba(255, 122, 89, 0.12), transparent 55%),
+    var(--l-bg);
+}
+
+/* Surfaces */
+.light-surface {
+  background: var(--l-surface);
+  border-color: var(--l-border);
+}
+.light-surface-2 {
+  background: var(--l-surface-2);
+  border-color: var(--l-border);
+}
+
+/* Text roles */
+.light-text {
+  color: var(--l-text);
+}
+.light-text-muted {
+  color: var(--l-text-muted);
+}
+.light-text-subtle {
+  color: var(--l-text-subtle);
+}
+.light-text-accent {
+  color: var(--l-accent);
+}
+
+/* Borders */
+.light-border {
+  border-color: var(--l-border);
+}
+
+/* Interactive card: subtle lift + accent border on hover */
+.light-card {
+  background: var(--l-surface);
+  border-color: var(--l-border);
+  box-shadow: 0 1px 2px rgba(28, 22, 51, 0.04);
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease,
+    background-color 0.2s ease;
+}
+.light-card:enabled:hover {
+  transform: translateY(-4px);
+  border-color: var(--l-border-strong);
+  background: var(--l-surface-hover);
+  box-shadow: 0 12px 28px -12px rgba(109, 59, 245, 0.28);
+}
+.light-card:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+/* Text input */
+.light-input {
+  background: var(--l-surface);
+  border-color: var(--l-border);
+  color: var(--l-text);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+.light-input::placeholder {
+  color: var(--l-text-subtle);
+}
+.light-input:hover {
+  border-color: var(--l-border-strong);
+}
+.light-input:focus {
+  border-color: var(--l-accent);
+  background: var(--l-surface);
+  box-shadow: 0 0 0 3px rgba(109, 59, 245, 0.16);
+}
+
+/* Solid accent button */
+.light-btn {
+  background: var(--l-accent);
+  color: #ffffff;
+  transition: background-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+  box-shadow: 0 6px 16px -8px rgba(109, 59, 245, 0.5);
+}
+.light-btn:hover {
+  background: var(--l-accent-strong);
+  box-shadow: 0 8px 20px -8px rgba(109, 59, 245, 0.55);
+}
+.light-btn:active {
+  transform: translateY(1px);
+}
+
+/* Soft pill (badges / coming-soon) */
+.light-pill {
+  background: var(--l-accent-soft);
+  color: var(--l-accent-strong);
+}
