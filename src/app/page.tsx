@@ -23,6 +23,7 @@ export default function Home() {
 
   return (
     <div className="theme-light min-h-screen">
+      <CursorTrail />
       <main className="mx-auto max-w-5xl px-6 py-14">
         <header className="mb-12 text-center">
           <div className="light-surface light-text-accent mb-3 inline-flex animate-float items-center gap-2 rounded-full border px-4 py-1.5 text-sm font-medium shadow-sm">
