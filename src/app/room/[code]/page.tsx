@@ -19,6 +19,7 @@ export default function RoomPage({ params }: { params: { code: string } }) {
   const [state, setState] = useState<RoomState | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [toast, setToast] = useState<string | null>(null);
 
   // Load any remembered name on first paint.
   useEffect(() => {
@@ -42,15 +43,28 @@ export default function RoomPage({ params }: { params: { code: string } }) {
       setError(e.message);
     }
 
+    function onPlayerJoined({ name: who }: { name: string }) {
+      setToast(`👋 ${who} joined the party!`);
+      setTimeout(() => setToast(null), 3000);
+    }
+    function onWelcome({ name: who }: { name: string }) {
+      setToast(`🎉 Welcome, ${who}! You're in.`);
+      setTimeout(() => setToast(null), 3000);
+    }
+
     socket.on("connect", join);
     socket.on("room:state", onState);
     socket.on("room:error", onError);
+    socket.on("room:player-joined", onPlayerJoined);
+    socket.on("room:welcome", onWelcome);
     if (socket.connected) join();
 
     return () => {
       socket.off("connect", join);
       socket.off("room:state", onState);
       socket.off("room:error", onError);
+      socket.off("room:player-joined", onPlayerJoined);
+      socket.off("room:welcome", onWelcome);
     };
   }, [name, code, requestedGame]);
 
@@ -174,6 +188,12 @@ export default function RoomPage({ params }: { params: { code: string } }) {
           </ul>
         </aside>
       </div>
+
+      {toast && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 rounded-full bg-gray-900 px-5 py-2.5 text-sm font-semibold text-white shadow-lg">
+          {toast}
+        </div>
+      )}
     </main>
   );
 }
