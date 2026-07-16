@@ -43,15 +43,28 @@ export default function RoomPage({ params }: { params: { code: string } }) {
       setError(e.message);
     }
 
+    function onPlayerJoined({ name: who }: { name: string }) {
+      setToast(`👋 ${who} joined the party!`);
+      setTimeout(() => setToast(null), 3000);
+    }
+    function onWelcome({ name: who }: { name: string }) {
+      setToast(`🎉 Welcome, ${who}! You're in.`);
+      setTimeout(() => setToast(null), 3000);
+    }
+
     socket.on("connect", join);
     socket.on("room:state", onState);
     socket.on("room:error", onError);
+    socket.on("room:player-joined", onPlayerJoined);
+    socket.on("room:welcome", onWelcome);
     if (socket.connected) join();
 
     return () => {
       socket.off("connect", join);
       socket.off("room:state", onState);
       socket.off("room:error", onError);
+      socket.off("room:player-joined", onPlayerJoined);
+      socket.off("room:welcome", onWelcome);
     };
   }, [name, code, requestedGame]);
 
