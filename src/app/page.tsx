@@ -53,41 +53,31 @@ export default function Home() {
         </form>
 
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {GAMES.map((game) => {
-            const live = game.status === "live";
-            return (
-              <button
-                key={game.id}
-                disabled={!live}
-                onClick={() => live && startGame(game.id)}
-                className="light-card group relative overflow-hidden rounded-2xl border p-6 text-left"
-              >
-                <div
-                  className="absolute -right-8 -top-8 h-24 w-24 rounded-full opacity-25 blur-2xl transition group-enabled:group-hover:opacity-50"
-                  style={{ background: game.accent }}
-                />
-                <div className="mb-4 text-4xl">{game.emoji}</div>
-                <h2 className="light-text mb-1 text-xl font-bold">
-                  {game.name}
-                </h2>
-                <p className="light-text-muted mb-4 text-sm">{game.blurb}</p>
-                <div className="flex items-center justify-between text-sm">
-                  <span className="light-text-subtle">
-                    {game.minPlayers}+ players
-                  </span>
-                  {live ? (
-                    <span className="light-text-accent font-semibold transition group-hover:translate-x-0.5">
-                      Start →
-                    </span>
-                  ) : (
-                    <span className="light-pill rounded-full px-2.5 py-0.5 text-xs font-medium">
-                      Coming soon
-                    </span>
-                  )}
-                </div>
-              </button>
-            );
-          })}
+          {GAMES.map((game) => (
+            <button
+              key={game.id}
+              onClick={() => startGame(game.id)}
+              className="light-card group relative overflow-hidden rounded-2xl border p-6 text-left"
+            >
+              <div
+                className="absolute -right-8 -top-8 h-24 w-24 rounded-full opacity-25 blur-2xl transition group-enabled:group-hover:opacity-50"
+                style={{ background: game.accent }}
+              />
+              <div className="mb-4 text-4xl">{game.emoji}</div>
+              <h2 className="light-text mb-1 text-xl font-bold">
+                {game.name}
+              </h2>
+              <p className="light-text-muted mb-4 text-sm">{game.blurb}</p>
+              <div className="flex items-center justify-between text-sm">
+                <span className="light-text-subtle">
+                  {game.minPlayers}+ players
+                </span>
+                <span className="light-text-accent font-semibold transition group-hover:translate-x-0.5">
+                  Start →
+                </span>
+              </div>
+            </button>
+          ))}
         </div>
 
         <footer className="light-text-subtle mt-16 text-center text-sm">
