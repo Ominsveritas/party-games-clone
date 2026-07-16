@@ -52,14 +52,5 @@
     "accent": "#22d3ee",
     "minPlayers": 1,
     "status": "live"
-  },
-  {
-    "id": "buzzword-bingo",
-    "name": "Buzzword Bingo",
-    "blurb": "Mark the buzzwords as they get dropped. First to a line wins.",
-    "emoji": "🟦",
-    "accent": "#22c55e",
-    "minPlayers": 2,
-    "status": "soon"
   }
 ]
