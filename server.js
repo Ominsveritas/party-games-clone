@@ -45,10 +45,17 @@ app.prepare().then(() => {
       socket.join(code);
       joinedCode = code;
 
+      const resolvedName = room.members.get(socket.id).name;
+
       const broadcastState = () => io.to(code).emit("room:state", publicState(room));
       if (game && game.register) game.register(io, socket, { room, broadcastState });
 
       broadcastState();
+
+      // Notify existing players that someone new arrived.
+      socket.to(code).emit("room:player-joined", { name: resolvedName });
+      // Welcome the joining player privately.
+      socket.emit("room:welcome", { name: resolvedName });
     });
 
     socket.on("room:rename", ({ name }) => {
