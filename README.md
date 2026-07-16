@@ -32,7 +32,6 @@ browser tab (or on your phone, on the same network) to play along.
 | 🧠 Beopardy | Buzz-in trivia with Daily Doubles and a final round. |
 | 🕵️ Two Truths & a Lie | Submit three statements, the room guesses the lie. |
 | 🎤 Punchline | One prompt, your funniest answer, the room votes. |
-| 🟦 Buzzword Bingo | _(stub — wire it up as your first contribution)_ |
 
 ## How it works
 
