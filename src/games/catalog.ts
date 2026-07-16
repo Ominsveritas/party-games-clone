@@ -1,6 +1,6 @@
 import catalog from "./catalog.json";
 
-export type GameStatus = "live" | "soon";
+export type GameStatus = "live";
 
 export interface GameMeta {
   id: string;
