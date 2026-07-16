@@ -188,6 +188,12 @@ export default function RoomPage({ params }: { params: { code: string } }) {
           </ul>
         </aside>
       </div>
+
+      {toast && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 rounded-full bg-gray-900 px-5 py-2.5 text-sm font-semibold text-white shadow-lg">
+          {toast}
+        </div>
+      )}
     </main>
   );
 }
