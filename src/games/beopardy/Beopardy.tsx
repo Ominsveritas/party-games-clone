@@ -586,8 +586,51 @@ export default function Beopardy({ socket, me, members, game }: GameProps) {
 
   if (phase === "gameover") {
     const medals = ["🥇", "🥈", "🥉"];
+    const winner = playerList[0];
+
+    // Deterministic-looking confetti: 40 pieces with seeded positions/colours/timings.
+    const CONFETTI_COLORS = [
+      "#fbbf24", "#f87171", "#34d399", "#60a5fa",
+      "#a78bfa", "#f472b6", "#fb923c", "#4ade80",
+    ];
+    const confettiPieces = Array.from({ length: 40 }, (_, i) => ({
+      id: i,
+      left: `${(i * 2.5 + (i % 7) * 3.1) % 100}%`,
+      color: CONFETTI_COLORS[i % CONFETTI_COLORS.length],
+      duration: `${2.2 + (i % 9) * 0.3}s`,
+      delay: `${(i % 12) * 0.18}s`,
+      width: i % 3 === 0 ? "8px" : "6px",
+      height: i % 3 === 0 ? "6px" : "10px",
+      borderRadius: i % 4 === 0 ? "50%" : "2px",
+    }));
+
     return (
-      <div className="mx-auto max-w-md text-center">
+      <div className="relative mx-auto max-w-md text-center">
+        {/* Confetti layer */}
+        <div className="pointer-events-none fixed inset-0 overflow-hidden" aria-hidden="true">
+          {confettiPieces.map((p) => (
+            <div
+              key={p.id}
+              className="absolute top-0"
+              style={{
+                left: p.left,
+                width: p.width,
+                height: p.height,
+                borderRadius: p.borderRadius,
+                backgroundColor: p.color,
+                animation: `confetti-fall ${p.duration} ${p.delay} linear forwards`,
+              }}
+            />
+          ))}
+        </div>
+
+        {/* Winner toast/banner */}
+        {winner && (
+          <div className="mb-6 animate-pop-in rounded-2xl border border-amber-400/60 bg-amber-400/15 px-6 py-4 text-2xl font-black text-amber-200 shadow-lg">
+            🎉 {winner.name} wins!
+          </div>
+        )}
+
         <p className="mb-2 text-4xl">🏆</p>
         <h2 className="mb-6 text-3xl font-black">Final standings</h2>
         <ul className="flex flex-col gap-2">
