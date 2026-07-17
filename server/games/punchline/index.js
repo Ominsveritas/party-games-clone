@@ -172,10 +172,17 @@ function register(io, socket, { room, broadcastState }) {
   const myKey = () => keyOf(room, socket.id);
   const isHost = () => socket.id === g.hostId;
 
+  socket.on("pl:setDuration", ({ seconds } = {}) => {
+    if (!isHost() || g.phase !== "lobby") return;
+    const clamped = Math.min(120, Math.max(30, Math.round(Number(seconds) || 60)));
+    g.roundDuration = clamped;
+    broadcastState();
+  });
+
   socket.on("pl:start", () => {
     if (!isHost()) return;
     if (g.phase !== "lobby" && g.phase !== "results") return;
-    startRound(room);
+    startRound(room, broadcastState);
     broadcastState();
   });
 
@@ -188,7 +195,7 @@ function register(io, socket, { room, broadcastState }) {
     ensurePlayer(room, myName);
     room.private.answers[key] = clean;
     g.answered.push(key);
-    maybeAdvanceWrite(room);
+    maybeAdvanceWrite(room, broadcastState);
     broadcastState();
   });
 
@@ -207,8 +214,10 @@ function register(io, socket, { room, broadcastState }) {
   socket.on("pl:force", () => {
     if (!isHost()) return;
     if (g.phase === "write" && Object.keys(room.private.answers).length >= 2) {
-      buildVote(room);
+      clearRoomTimer(room.code);
+      startVotePhase(room, broadcastState);
     } else if (g.phase === "vote") {
+      clearRoomTimer(room.code);
       buildResults(room);
     } else {
       return;
@@ -224,6 +233,7 @@ function register(io, socket, { room, broadcastState }) {
 
   socket.on("pl:newGame", () => {
     if (!isHost()) return;
+    clearRoomTimer(room.code);
     g.phase = "lobby";
     g.players = {};
     g.round = 0;
@@ -232,6 +242,7 @@ function register(io, socket, { room, broadcastState }) {
     g.voted = [];
     g.gallery = null;
     g.reveals = null;
+    g.timerEndsAt = null;
     room.private.usedPrompts = [];
     room.private.answers = {};
     room.private.authors = {};
