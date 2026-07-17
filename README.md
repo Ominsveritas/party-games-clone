@@ -1,4 +1,9 @@
-# 🎲 Party Games
+# 🎲 Standup Party Games
+
+> **Party Games** — a real-time multiplayer party game hub you can run in a browser.
+> Players gather in a shared room — no accounts, no downloads — pick a game from
+> the lobby, and play together over a live WebSocket connection. One device can be
+> the "host" screen; everyone else joins on their phone or laptop.
 
 Quick, real-time multiplayer mini-games. Pick a game, share the room code, and
 play together in seconds — all from one tiny server.
