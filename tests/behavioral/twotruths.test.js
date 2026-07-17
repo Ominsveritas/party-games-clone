@@ -62,8 +62,8 @@ describe("two-truths — submit → auto-begin → vote → reveal flow", () => 
     twotruths.register(fakeIo, s1, { room, broadcastState });
     twotruths.register(fakeIo, s2, { room, broadcastState });
 
-    // Both players submit. Alice's lie is index 2 ("I have a pet iguana").
-    s1._trigger("tt:submit", { statements: ALICE_STATEMENTS, lieIndex: 2 });
+    // Both players submit. Alice's lie is index 3 ("I have a pet iguana").
+    s1._trigger("tt:submit", { statements: ALICE_STATEMENTS, lieIndex: 3 });
     // After one submission the game should still be in collect.
     expect(room.game.phase).toBe("collect");
 
