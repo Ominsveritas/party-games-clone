@@ -57,7 +57,7 @@ function init(room) {
   if (!room.private.usedPrompts) room.private.usedPrompts = [];
 }
 
-function startRound(room) {
+function startRound(room, broadcastState) {
   const g = room.game;
   let available = PROMPTS.map((_, i) => i).filter(
     (i) => !room.private.usedPrompts.includes(i),
@@ -78,6 +78,23 @@ function startRound(room) {
   room.private.authors = {};
   room.private.votes = {};
   g.phase = "write";
+  g.timerEndsAt = Date.now() + g.roundDuration * 1000;
+
+  clearRoomTimer(room.code);
+  roomTimers.set(
+    room.code,
+    setTimeout(() => {
+      roomTimers.delete(room.code);
+      if (room.game.phase !== "write") return;
+      if (Object.keys(room.private.answers).length >= 2) {
+        startVotePhase(room, broadcastState);
+      } else {
+        // Not enough answers — just clear the timer end marker
+        room.game.timerEndsAt = null;
+      }
+      broadcastState();
+    }, g.roundDuration * 1000),
+  );
 }
 
 function buildVote(room) {
