@@ -102,6 +102,75 @@ export function playWrong() {
   osc.stop(t + 0.4);
 }
 
+// Random funny sound on answer lock-in — picks from boing / rimshot / woo / slide-whistle.
+export function playAnswerLock() {
+  const c = getCtx();
+  if (!c) return;
+  const t = c.currentTime;
+  const choice = Math.floor(Math.random() * 4);
+
+  if (choice === 0) {
+    // Boing — sinusoidal pitch swooping down then up
+    const osc = c.createOscillator();
+    const gain = c.createGain();
+    osc.type = "sine";
+    osc.frequency.setValueAtTime(600, t);
+    osc.frequency.exponentialRampToValueAtTime(120, t + 0.18);
+    osc.frequency.exponentialRampToValueAtTime(480, t + 0.38);
+    gain.gain.setValueAtTime(0.0001, t);
+    gain.gain.exponentialRampToValueAtTime(0.28, t + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.42);
+    osc.connect(gain).connect(c.destination);
+    osc.start(t);
+    osc.stop(t + 0.48);
+  } else if (choice === 1) {
+    // Rimshot — ba-dum-TSS (two short notes + noise burst)
+    note(c, 180, t, 0.06, 0.22, "square");       // ba
+    note(c, 220, t + 0.08, 0.06, 0.22, "square"); // dum
+    // tss — short white-noise burst via a buffer
+    const bufLen = Math.floor(c.sampleRate * 0.12);
+    const buf = c.createBuffer(1, bufLen, c.sampleRate);
+    const data = buf.getChannelData(0);
+    for (let i = 0; i < bufLen; i++) data[i] = (Math.random() * 2 - 1) * 0.35;
+    const src = c.createBufferSource();
+    src.buffer = buf;
+    const g2 = c.createGain();
+    g2.gain.setValueAtTime(0.0001, t + 0.16);
+    g2.gain.exponentialRampToValueAtTime(0.35, t + 0.165);
+    g2.gain.exponentialRampToValueAtTime(0.0001, t + 0.28);
+    src.connect(g2).connect(c.destination);
+    src.start(t + 0.16);
+    src.stop(t + 0.30);
+  } else if (choice === 2) {
+    // "Woo!" — rising squeal
+    const osc = c.createOscillator();
+    const gain = c.createGain();
+    osc.type = "triangle";
+    osc.frequency.setValueAtTime(300, t);
+    osc.frequency.exponentialRampToValueAtTime(900, t + 0.12);
+    osc.frequency.exponentialRampToValueAtTime(750, t + 0.22);
+    gain.gain.setValueAtTime(0.0001, t);
+    gain.gain.exponentialRampToValueAtTime(0.25, t + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.26);
+    osc.connect(gain).connect(c.destination);
+    osc.start(t);
+    osc.stop(t + 0.30);
+  } else {
+    // Slide whistle — rapid frequency glide from high to low
+    const osc = c.createOscillator();
+    const gain = c.createGain();
+    osc.type = "sine";
+    osc.frequency.setValueAtTime(1400, t);
+    osc.frequency.exponentialRampToValueAtTime(220, t + 0.35);
+    gain.gain.setValueAtTime(0.0001, t);
+    gain.gain.exponentialRampToValueAtTime(0.22, t + 0.01);
+    gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.38);
+    osc.connect(gain).connect(c.destination);
+    osc.start(t);
+    osc.stop(t + 0.42);
+  }
+}
+
 // Triumphant little fanfare — rising arpeggio into a held chord.
 export function playFanfare() {
   const c = getCtx();
