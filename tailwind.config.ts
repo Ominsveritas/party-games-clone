@@ -23,11 +23,16 @@ const config: Config = {
           "60%": { transform: "translateX(-4px)" },
           "80%": { transform: "translateX(4px)" },
         },
+        "confetti-fall": {
+          "0%": { transform: "translateY(-10%) rotate(0deg)", opacity: "1" },
+          "100%": { transform: "translateY(110vh) rotate(720deg)", opacity: "0" },
+        },
       },
       animation: {
         "pop-in": "pop-in 0.25s ease-out",
         float: "float 4s ease-in-out infinite",
         shake: "shake 0.4s ease-in-out",
+        "confetti-fall": "confetti-fall linear forwards",
       },
     },
   },
