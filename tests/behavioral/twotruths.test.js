@@ -31,8 +31,8 @@ function makeFakeSocket(id, name, room) {
 // ---------------------------------------------------------------------------
 // Test data
 // ---------------------------------------------------------------------------
-const ALICE_STATEMENTS = ["I've climbed Everest", "I love jazz", "I have a pet iguana"];
-const BOB_STATEMENTS   = ["I ran a marathon", "I can juggle", "I've been to Antarctica"];
+const ALICE_STATEMENTS = ["I've climbed Everest", "I love jazz", "I speak three languages", "I have a pet iguana"];
+const BOB_STATEMENTS   = ["I ran a marathon", "I can juggle", "I've visited 30 countries", "I've been to Antarctica"];
 
 // ---------------------------------------------------------------------------
 // Tests
