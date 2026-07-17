@@ -97,7 +97,7 @@ export default function TwoTruths({ socket, me, members, game }: GameProps) {
           <div className="mb-2 text-5xl">🕵️</div>
           <h2 className="text-2xl font-black">Two Truths & a Lie</h2>
           <p className="mt-1 text-violet-100/60">
-            Write two truths and one lie about yourself. Mark the lie.
+            Write three truths and one lie about yourself. Mark the lie.
           </p>
         </div>
         {!hasSubmitted ? (
