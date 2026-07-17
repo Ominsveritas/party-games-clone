@@ -3,6 +3,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Party Games — real-time multiplayer mini-games",
+  // Name: Party Games (no "Clone")
   description: "Quick, real-time multiplayer mini-games. Pick a game, share a room code, play in seconds.",
 };
 
