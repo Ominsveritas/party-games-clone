@@ -1,4 +1,4 @@
-# 🎲 Party Games
+# 🎲 Standup Party Games
 
 > **Party Games** — a real-time multiplayer party game hub you can run in a browser.
 > Players gather in a shared room — no accounts, no downloads — pick a game from
