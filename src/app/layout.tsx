@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Party Games — real-time multiplayer mini-games",
+  title: "Standup Party Games — real-time multiplayer mini-games",
   description: "Quick, real-time multiplayer mini-games. Pick a game, share a room code, play in seconds.",
 };
 
