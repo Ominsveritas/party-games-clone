@@ -1,6 +1,6 @@
 // Two Truths & a Lie.
 //
-// Everyone submits 3 statements (server shuffles them so the lie's position is
+// Everyone submits 4 statements (server shuffles them so the lie's position is
 // random) and marks the lie. Then one player at a time is "featured": everyone
 // else votes which statement is the lie. Correct guessers score; the featured
 // player scores for every guesser they fool.
