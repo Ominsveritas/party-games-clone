@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import type { GameProps } from "../registry";
-import { playCorrect, playFanfare } from "@/lib/sounds";
+import { playCorrect, playFanfare, playWrong, playAnswerLock } from "@/lib/sounds";
 
 interface PPlayer {
   name: string;
@@ -18,10 +18,19 @@ interface PunchlineState {
   voted?: string[];
   gallery?: { aid: string; text: string }[] | null;
   reveals?: { aid: string; text: string; name: string; votes: number }[] | null;
+  roundDuration?: number;
+  timerEndsAt?: number | null;
 }
 
 function nameKey(name: string | undefined | null) {
   return String(name || "").trim().toLowerCase();
+}
+
+function formatCountdown(ms: number): string {
+  const totalSec = Math.max(0, Math.ceil(ms / 1000));
+  const m = Math.floor(totalSec / 60);
+  const s = totalSec % 60;
+  return `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
 }
 
 export default function Punchline({ socket, me, members, game }: GameProps) {
@@ -36,7 +45,26 @@ export default function Punchline({ socket, me, members, game }: GameProps) {
   const [answerInput, setAnswerInput] = useState("");
   const [myAnswer, setMyAnswer] = useState<string | null>(null); // to spot my own card
   const [myVote, setMyVote] = useState<string | null>(null);
+  const [selfClickPopup, setSelfClickPopup] = useState(false);
+  // Countdown: ms remaining, updated every second via setInterval
+  const [countdown, setCountdown] = useState<number | null>(null);
   const prevPhase = useRef(phase);
+  const selfClickTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Recompute countdown from timerEndsAt on every render tick
+  useEffect(() => {
+    if (!g.timerEndsAt || (phase !== "write" && phase !== "vote")) {
+      setCountdown(null);
+      return;
+    }
+    const tick = () => {
+      const remaining = (g.timerEndsAt as number) - Date.now();
+      setCountdown(remaining);
+    };
+    tick(); // immediate first update
+    const id = setInterval(tick, 1000);
+    return () => clearInterval(id);
+  }, [g.timerEndsAt, phase]);
 
   useEffect(() => {
     if (prevPhase.current !== phase) {
@@ -44,6 +72,7 @@ export default function Punchline({ socket, me, members, game }: GameProps) {
         setAnswerInput("");
         setMyAnswer(null);
         setMyVote(null);
+        setSelfClickPopup(false);
       }
       if (phase === "results") {
         const mine = g.reveals?.find((r) => r.text === myAnswer);
@@ -53,6 +82,13 @@ export default function Punchline({ socket, me, members, game }: GameProps) {
       prevPhase.current = phase;
     }
   }, [phase, g.reveals, myAnswer]);
+
+  // Clean up self-click popup timer on unmount
+  useEffect(() => {
+    return () => {
+      if (selfClickTimer.current) clearTimeout(selfClickTimer.current);
+    };
+  }, []);
 
   const playerList = Object.entries(players)
     .map(([key, p]) => ({ key, ...p }))
@@ -87,8 +123,20 @@ export default function Punchline({ socket, me, members, game }: GameProps) {
     </div>
   );
 
+  // Shared countdown badge shown in write + vote phases
+  const countdownBadge = countdown !== null && (
+    <div
+      className={`mb-4 text-center font-mono text-2xl font-black tabular-nums transition-colors ${
+        countdown <= 10000 ? "text-red-400" : "text-violet-100/70"
+      }`}
+    >
+      ⏱ {formatCountdown(countdown)}
+    </div>
+  );
+
   // ---- Lobby ---------------------------------------------------------------
   if (phase === "lobby") {
+    const duration = g.roundDuration ?? 60;
     return (
       <div className="mx-auto max-w-md text-center">
         <div className="mb-3 text-5xl">🎤</div>
@@ -98,13 +146,33 @@ export default function Punchline({ socket, me, members, game }: GameProps) {
           anonymously, the room votes, votes are points.
         </p>
         {isHost ? (
-          <button
-            onClick={() => socket.emit("pl:start")}
-            disabled={members.length < 2}
-            className="rounded-2xl bg-gradient-to-br from-pink-500 to-fuchsia-500 px-8 py-4 text-lg font-black uppercase tracking-wide transition enabled:hover:scale-105 disabled:opacity-40"
-          >
-            Start round 1
-          </button>
+          <>
+            <div className="mb-6">
+              <p className="mb-2 text-sm font-semibold text-violet-100/60">Round timer</p>
+              <div className="flex justify-center gap-2">
+                {([30, 60, 90, 120] as const).map((s) => (
+                  <button
+                    key={s}
+                    onClick={() => socket.emit("pl:setDuration", { seconds: s })}
+                    className={`rounded-xl border px-4 py-2 text-sm font-bold transition ${
+                      duration === s
+                        ? "border-pink-400/70 bg-pink-400/20 text-pink-200"
+                        : "border-white/10 bg-white/5 text-violet-100/60 hover:border-white/20 hover:bg-white/10"
+                    }`}
+                  >
+                    {s}s
+                  </button>
+                ))}
+              </div>
+            </div>
+            <button
+              onClick={() => socket.emit("pl:start")}
+              disabled={members.length < 2}
+              className="rounded-2xl bg-gradient-to-br from-pink-500 to-fuchsia-500 px-8 py-4 text-lg font-black uppercase tracking-wide transition enabled:hover:scale-105 disabled:opacity-40"
+            >
+              Start round 1
+            </button>
+          </>
         ) : (
           <p className="text-violet-100/50">Waiting for the host to kick off…</p>
         )}
@@ -117,10 +185,20 @@ export default function Punchline({ socket, me, members, game }: GameProps) {
     const waitingOn = members
       .map((m) => nameKey(m.name))
       .filter((k) => !(g.answered ?? []).includes(k));
+
+    function submitAnswer() {
+      const trimmed = answerInput.trim();
+      if (!trimmed) return;
+      playAnswerLock();
+      setMyAnswer(trimmed);
+      socket.emit("pl:answer", { text: answerInput });
+    }
+
     return (
       <div className="mx-auto max-w-lg">
         {rail}
         {promptCard}
+        {countdownBadge}
         {!hasAnswered ? (
           <div className="flex gap-2">
             <input
@@ -129,8 +207,7 @@ export default function Punchline({ socket, me, members, game }: GameProps) {
               onChange={(e) => setAnswerInput(e.target.value)}
               onKeyDown={(e) => {
                 if (e.key === "Enter" && answerInput.trim()) {
-                  setMyAnswer(answerInput.trim());
-                  socket.emit("pl:answer", { text: answerInput });
+                  submitAnswer();
                 }
               }}
               placeholder="Your funniest answer…"
@@ -139,10 +216,7 @@ export default function Punchline({ socket, me, members, game }: GameProps) {
             />
             <button
               disabled={!answerInput.trim()}
-              onClick={() => {
-                setMyAnswer(answerInput.trim());
-                socket.emit("pl:answer", { text: answerInput });
-              }}
+              onClick={submitAnswer}
               className="rounded-xl bg-gradient-to-br from-pink-500 to-fuchsia-500 px-5 py-3 font-black uppercase transition enabled:hover:scale-105 disabled:opacity-40"
             >
               Lock
@@ -178,6 +252,7 @@ export default function Punchline({ socket, me, members, game }: GameProps) {
       <div className="mx-auto max-w-lg">
         {rail}
         {promptCard}
+        {countdownBadge}
         <p className="mb-3 text-center text-sm text-violet-100/60">
           {hasVoted ? "Vote locked. Waiting for the rest…" : "Vote for your favorite (not your own!)"}
         </p>
@@ -185,26 +260,40 @@ export default function Punchline({ socket, me, members, game }: GameProps) {
           {(g.gallery ?? []).map(({ aid, text }) => {
             const isMine = myAnswer !== null && text === myAnswer;
             const picked = myVote === aid;
+            const showPopup = selfClickPopup && isMine;
             return (
-              <button
-                key={aid}
-                disabled={hasVoted || isMine}
-                onClick={() => {
-                  setMyVote(aid);
-                  socket.emit("pl:vote", { aid });
-                }}
-                className={`rounded-2xl border-2 p-4 text-left text-lg font-semibold leading-snug transition ${
-                  picked
-                    ? "border-pink-400/70 bg-pink-400/15"
-                    : isMine
-                      ? "border-white/5 bg-white/[0.03] opacity-50"
-                      : "border-white/10 bg-white/5 enabled:hover:border-pink-400/40 enabled:hover:bg-white/10"
-                } disabled:cursor-default`}
-              >
-                {text}
-                {isMine && <span className="ml-2 text-xs text-violet-100/40">(yours)</span>}
-                {picked && <span className="ml-2">👈</span>}
-              </button>
+              <div key={aid} className="relative">
+                <button
+                  disabled={hasVoted && !isMine}
+                  onClick={() => {
+                    if (isMine) {
+                      playWrong();
+                      setSelfClickPopup(true);
+                      if (selfClickTimer.current) clearTimeout(selfClickTimer.current);
+                      selfClickTimer.current = setTimeout(() => setSelfClickPopup(false), 2000);
+                      return;
+                    }
+                    setMyVote(aid);
+                    socket.emit("pl:vote", { aid });
+                  }}
+                  className={`w-full rounded-2xl border-2 p-4 text-left text-lg font-semibold leading-snug transition ${
+                    picked
+                      ? "border-pink-400/70 bg-pink-400/15"
+                      : isMine
+                        ? "border-white/5 bg-white/[0.03] opacity-50 hover:opacity-70"
+                        : "border-white/10 bg-white/5 enabled:hover:border-pink-400/40 enabled:hover:bg-white/10"
+                  } disabled:cursor-default`}
+                >
+                  {text}
+                  {isMine && <span className="ml-2 text-xs text-violet-100/40">(yours)</span>}
+                  {picked && <span className="ml-2">👈</span>}
+                </button>
+                {showPopup && (
+                  <div className="animate-bounce-in pointer-events-none absolute -top-10 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-xl border border-pink-400/40 bg-gray-900 px-3 py-1.5 text-sm font-bold text-pink-300 shadow-lg">
+                    😂 Nice try — that&apos;s yours!
+                  </div>
+                )}
+              </div>
             );
           })}
         </div>
