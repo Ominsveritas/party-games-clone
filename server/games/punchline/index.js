@@ -110,6 +110,23 @@ function buildVote(room) {
   g.phase = "vote";
 }
 
+function startVotePhase(room, broadcastState) {
+  buildVote(room);
+  const g = room.game;
+  g.timerEndsAt = Date.now() + g.roundDuration * 1000;
+
+  clearRoomTimer(room.code);
+  roomTimers.set(
+    room.code,
+    setTimeout(() => {
+      roomTimers.delete(room.code);
+      if (room.game.phase !== "vote") return;
+      buildResults(room);
+      broadcastState();
+    }, g.roundDuration * 1000),
+  );
+}
+
 function buildResults(room) {
   const g = room.game;
   const counts = {};
