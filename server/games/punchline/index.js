@@ -259,7 +259,11 @@ function onLeave(room, socketId) {
     g.hostId = next.done ? null : next.value;
   }
   // A leaver may have been the last holdout in either waiting phase.
-  maybeAdvanceWrite(room);
+  // broadcastState is not available here; the server infrastructure broadcasts
+  // after onLeave returns, so passing a no-op is safe — state mutations are
+  // all that matter. The vote-phase timer's own broadcastState closure fires
+  // independently when it eventually fires.
+  maybeAdvanceWrite(room, () => {});
   maybeAdvanceVote(room);
 }
 
