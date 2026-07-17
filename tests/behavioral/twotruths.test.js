@@ -75,7 +75,7 @@ describe("two-truths — submit → auto-begin → vote → reveal flow", () => 
 
     // The featured player's statements must be publicly visible.
     expect(Array.isArray(room.game.statements)).toBe(true);
-    expect(room.game.statements).toHaveLength(3);
+    expect(room.game.statements).toHaveLength(4);
 
     // Determine which socket is not featured so they cast the vote.
     const featuredKey = room.game.featuredKey; // "alice" or "bob"
