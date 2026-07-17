@@ -53,6 +53,7 @@ function init(room) {
   if (!g.phase) g.phase = "lobby";
   if (!g.players) g.players = {};
   if (typeof g.round !== "number") g.round = 0;
+  if (typeof g.roundDuration !== "number") g.roundDuration = 60;
   if (!room.private.usedPrompts) room.private.usedPrompts = [];
 }
 
