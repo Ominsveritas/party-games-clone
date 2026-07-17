@@ -143,13 +143,13 @@ function buildResults(room) {
   g.phase = "results";
 }
 
-function maybeAdvanceWrite(room) {
+function maybeAdvanceWrite(room, broadcastState) {
   const g = room.game;
   if (g.phase !== "write") return;
   const present = [...presentKeys(room)];
   const answers = Object.keys(room.private.answers);
   if (answers.length >= 2 && present.every((k) => k in room.private.answers)) {
-    buildVote(room);
+    startVotePhase(room, broadcastState);
   }
 }
 
