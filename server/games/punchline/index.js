@@ -8,6 +8,17 @@
 // strings — future AI generation just appends more.
 const PROMPTS = require("./prompts.json");
 
+/** Module-level map so we can clear timers across handler calls. */
+const roomTimers = new Map(); // roomCode -> NodeJS.Timeout
+
+function clearRoomTimer(roomCode) {
+  const existing = roomTimers.get(roomCode);
+  if (existing) {
+    clearTimeout(existing);
+    roomTimers.delete(roomCode);
+  }
+}
+
 function nameKey(name) {
   return String(name || "").trim().toLowerCase();
 }
