@@ -24,12 +24,19 @@ export default function Home() {
     <div className="theme-light min-h-screen">
       <main className="mx-auto max-w-5xl px-6 py-14">
         <header className="mb-12 text-center">
-          <div className="light-surface light-text-accent mb-3 inline-flex animate-float items-center gap-2 rounded-full border px-4 py-1.5 text-sm font-medium shadow-sm">
+          <div className="light-surface light-text-accent mb-3 inline-flex animate-float items-center gap-2 rounded-full border px-4 py-1.5 text-sm font-medium shadow-sm hover:animate-wiggle">
             🎲 play together, instantly
           </div>
-          <h1 className="light-text pb-1 text-5xl font-black leading-tight tracking-tight sm:text-6xl">
-            Party Games 🎲
+          <h1 className="pb-1 text-5xl font-black leading-tight tracking-tight sm:text-6xl">
+            <span className="bg-gradient-to-r from-pink-500 via-violet-500 to-orange-400 bg-clip-text text-transparent">
+              silly fun party games 🎉
+            </span>
           </h1>
+          <div className="mt-2 flex items-center justify-center gap-3 text-2xl">
+            <span className="animate-float" style={{ animationDelay: "0s" }}>🎊</span>
+            <span className="animate-float" style={{ animationDelay: "0.6s" }}>✨</span>
+            <span className="animate-float" style={{ animationDelay: "1.2s" }}>🥳</span>
+          </div>
           <p className="light-text-muted mx-auto mt-4 max-w-xl text-balance text-lg">
             the party starts here
           </p>
