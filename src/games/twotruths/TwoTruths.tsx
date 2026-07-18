@@ -177,7 +177,9 @@ export default function TwoTruths({ socket, me, members, game }: GameProps) {
           Round {(g.roundIdx ?? 0) + 1} / {g.order?.length ?? "?"}
         </p>
         <h2 className="mb-5 text-center text-2xl font-black">
-          {isFeatured ? "Your statements — look innocent 😇" : `Which is ${playerName(g.featuredKey)}'s lie?`}
+          {isFeatured
+            ? "Your statements — look innocent 😇"
+            : `Which is ${members.find((m) => String(m.name).trim().toLowerCase() === g.featuredKey)?.avatar ?? "🎮"} ${playerName(g.featuredKey)}'s lie?`}
         </h2>
         <div className="flex flex-col gap-3">
           {(g.statements ?? []).map((s, i) => {
