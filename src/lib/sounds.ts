@@ -102,6 +102,32 @@ export function playWrong() {
   osc.stop(t + 0.4);
 }
 
+// Comedic descending "wah-wah-wah" — played when the room is removed.
+export function playRoomRemoved() {
+  const c = getCtx();
+  if (!c) return;
+  const t = c.currentTime;
+  // Three falling "womp" pulses, each lower and sadder than the last.
+  const pulses = [
+    { freq: 440, end: 280, start: t },
+    { freq: 320, end: 180, start: t + 0.28 },
+    { freq: 220, end: 100, start: t + 0.56 },
+  ];
+  for (const p of pulses) {
+    const osc = c.createOscillator();
+    const gain = c.createGain();
+    osc.type = "sawtooth";
+    osc.frequency.setValueAtTime(p.freq, p.start);
+    osc.frequency.exponentialRampToValueAtTime(p.end, p.start + 0.22);
+    gain.gain.setValueAtTime(0.0001, p.start);
+    gain.gain.exponentialRampToValueAtTime(0.28, p.start + 0.01);
+    gain.gain.exponentialRampToValueAtTime(0.0001, p.start + 0.26);
+    osc.connect(gain).connect(c.destination);
+    osc.start(p.start);
+    osc.stop(p.start + 0.3);
+  }
+}
+
 // Triumphant little fanfare — rising arpeggio into a held chord.
 export function playFanfare() {
   const c = getCtx();
