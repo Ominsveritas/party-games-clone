@@ -6,6 +6,7 @@ import { useSearchParams } from "next/navigation";
 import { getSocket, type Member, type RoomState } from "@/lib/socket";
 import { getGameMeta } from "@/games/catalog";
 import { GAME_COMPONENTS } from "@/games/registry";
+import { playRoomRemoved } from "@/lib/sounds";
 
 const NAME_KEY = "party-games:name";
 
@@ -20,6 +21,7 @@ export default function RoomPage({ params }: { params: { code: string } }) {
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
+  const [inverted, setInverted] = useState(false);
 
   // Load any remembered name on first paint.
   useEffect(() => {
@@ -52,11 +54,18 @@ export default function RoomPage({ params }: { params: { code: string } }) {
       setTimeout(() => setToast(null), 3000);
     }
 
+    function onRoomRemoved() {
+      playRoomRemoved();
+      setInverted(true);
+      setTimeout(() => setInverted(false), 1000);
+    }
+
     socket.on("connect", join);
     socket.on("room:state", onState);
     socket.on("room:error", onError);
     socket.on("room:player-joined", onPlayerJoined);
     socket.on("room:welcome", onWelcome);
+    socket.on("room:removed", onRoomRemoved);
     if (socket.connected) join();
 
     return () => {
@@ -65,6 +74,7 @@ export default function RoomPage({ params }: { params: { code: string } }) {
       socket.off("room:error", onError);
       socket.off("room:player-joined", onPlayerJoined);
       socket.off("room:welcome", onWelcome);
+      socket.off("room:removed", onRoomRemoved);
     };
   }, [name, code, requestedGame]);
 
@@ -134,7 +144,10 @@ export default function RoomPage({ params }: { params: { code: string } }) {
   const GameComponent = gameId ? GAME_COMPONENTS[gameId] : undefined;
 
   return (
-    <main className="mx-auto max-w-4xl px-6 py-8">
+    <main
+      className="mx-auto max-w-4xl px-6 py-8"
+      style={inverted ? { filter: "invert(1)", transition: "filter 0.05s" } : undefined}
+    >
       <header className="mb-8 flex flex-wrap items-center justify-between gap-4">
         <div>
           <Link href="/" className="text-sm text-violet-100/40 hover:text-violet-100/70">
