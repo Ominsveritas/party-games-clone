@@ -144,7 +144,10 @@ export default function RoomPage({ params }: { params: { code: string } }) {
   const GameComponent = gameId ? GAME_COMPONENTS[gameId] : undefined;
 
   return (
-    <main className="mx-auto max-w-4xl px-6 py-8">
+    <main
+      className="mx-auto max-w-4xl px-6 py-8"
+      style={inverted ? { filter: "invert(1)", transition: "filter 0.05s" } : undefined}
+    >
       <header className="mb-8 flex flex-wrap items-center justify-between gap-4">
         <div>
           <Link href="/" className="text-sm text-violet-100/40 hover:text-violet-100/70">
