@@ -54,11 +54,18 @@ export default function RoomPage({ params }: { params: { code: string } }) {
       setTimeout(() => setToast(null), 3000);
     }
 
+    function onRoomRemoved() {
+      playRoomRemoved();
+      setInverted(true);
+      setTimeout(() => setInverted(false), 1000);
+    }
+
     socket.on("connect", join);
     socket.on("room:state", onState);
     socket.on("room:error", onError);
     socket.on("room:player-joined", onPlayerJoined);
     socket.on("room:welcome", onWelcome);
+    socket.on("room:removed", onRoomRemoved);
     if (socket.connected) join();
 
     return () => {
@@ -67,6 +74,7 @@ export default function RoomPage({ params }: { params: { code: string } }) {
       socket.off("room:error", onError);
       socket.off("room:player-joined", onPlayerJoined);
       socket.off("room:welcome", onWelcome);
+      socket.off("room:removed", onRoomRemoved);
     };
   }, [name, code, requestedGame]);
 
