@@ -38,9 +38,14 @@ app.prepare().then(() => {
       const game = getGame(room.gameId);
       if (game && game.init) game.init(room);
 
+      const ANIMAL_EMOJIS = [
+        "🐶", "🦊", "🐸", "🦄", "🐼", "🐨", "🐯", "🦁", "🐮", "🐷",
+        "🐙", "🦋", "🐬", "🦅", "🦆", "🦉", "🐺", "🦝", "🐻", "🦜",
+      ];
       room.members.set(socket.id, {
         id: socket.id,
         name: String(name || "Guest").slice(0, 24) || "Guest",
+        avatar: ANIMAL_EMOJIS.includes(avatar) ? avatar : undefined,
       });
       socket.join(code);
       joinedCode = code;
