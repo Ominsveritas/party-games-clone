@@ -251,8 +251,8 @@ export default function TwoTruths({ socket, me, members, game }: GameProps) {
           <div className="mt-5 text-center">
             <p className="animate-pop-in text-lg">
               {reveal?.fooled
-                ? `🎭 ${playerName(g.featuredKey)} fooled ${reveal.fooled} ${reveal.fooled === 1 ? "person" : "people"} (+${reveal.fooled * 50})`
-                : `😅 Nobody was fooled by ${playerName(g.featuredKey)}`}
+                ? `🎭 ${members.find((m) => String(m.name).trim().toLowerCase() === g.featuredKey)?.avatar ?? "🎮"} ${playerName(g.featuredKey)} fooled ${reveal.fooled} ${reveal.fooled === 1 ? "person" : "people"} (+${reveal.fooled * 50})`
+                : `😅 Nobody was fooled by ${members.find((m) => String(m.name).trim().toLowerCase() === g.featuredKey)?.avatar ?? "🎮"} ${playerName(g.featuredKey)}`}
             </p>
             {isHost && (
               <button
