@@ -73,6 +73,7 @@ app.prepare().then(() => {
       if (!room) return;
       room.members.delete(socket.id);
       if (room.members.size === 0) {
+        io.to(joinedCode).emit("room:removed");
         removeRoom(joinedCode);
         return;
       }
