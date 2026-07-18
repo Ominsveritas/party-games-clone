@@ -72,6 +72,21 @@ app.prepare().then(() => {
       io.to(joinedCode).emit("room:state", publicState(room));
     });
 
+    socket.on("room:set-avatar", ({ avatar }) => {
+      if (!joinedCode) return;
+      const room = getRoom(joinedCode);
+      if (!room) return;
+      const member = room.members.get(socket.id);
+      const ANIMAL_EMOJIS = [
+        "🐶", "🦊", "🐸", "🦄", "🐼", "🐨", "🐯", "🦁", "🐮", "🐷",
+        "🐙", "🦋", "🐬", "🦅", "🦆", "🦉", "🐺", "🦝", "🐻", "🦜",
+      ];
+      if (member && ANIMAL_EMOJIS.includes(avatar)) {
+        member.avatar = avatar;
+        io.to(joinedCode).emit("room:state", publicState(room));
+      }
+    });
+
     socket.on("disconnect", () => {
       if (!joinedCode) return;
       const room = getRoom(joinedCode);
