@@ -28,11 +28,10 @@ export default function Home() {
             🎲 play together, instantly
           </div>
           <h1 className="light-text pb-1 text-5xl font-black leading-tight tracking-tight sm:text-6xl">
-            Party Games
+            Party Games 🎲
           </h1>
           <p className="light-text-muted mx-auto mt-4 max-w-xl text-balance text-lg">
-            Quick, real-time multiplayer mini-games. Start a room, share the
-            link, play in seconds.
+            the party starts here
           </p>
         </header>
 
