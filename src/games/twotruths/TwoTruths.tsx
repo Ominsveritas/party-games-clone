@@ -76,6 +76,7 @@ export default function TwoTruths({ socket, me, members, game }: GameProps) {
             p.key === myKey ? "border-orange-400/50 bg-orange-400/10" : "border-white/10 bg-white/5"
           }`}
         >
+          <span>{members.find((m) => String(m.name).trim().toLowerCase() === p.key)?.avatar ?? "🎮"}</span>
           <span className="font-semibold">
             {p.key === g.featuredKey && phase !== "collect" && "🎙️ "}
             {p.name}
