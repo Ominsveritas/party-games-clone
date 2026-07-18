@@ -71,6 +71,7 @@ export default function Punchline({ socket, me, members, game }: GameProps) {
             p.key === myKey ? "border-pink-400/50 bg-pink-400/10" : "border-white/10 bg-white/5"
           }`}
         >
+          <span>{members.find((m) => String(m.name).trim().toLowerCase() === p.key)?.avatar ?? "🎮"}</span>
           <span className="font-semibold">{p.name}</span>
           <span className="font-mono font-bold text-pink-300">{p.score}</span>
         </div>
