@@ -6,6 +6,7 @@ import { useSearchParams } from "next/navigation";
 import { getSocket, type Member, type RoomState } from "@/lib/socket";
 import { getGameMeta } from "@/games/catalog";
 import { GAME_COMPONENTS } from "@/games/registry";
+import { playRoomRemoved } from "@/lib/sounds";
 
 const NAME_KEY = "party-games:name";
 
