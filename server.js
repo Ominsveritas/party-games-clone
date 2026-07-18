@@ -21,7 +21,7 @@ app.prepare().then(() => {
   io.on("connection", (socket) => {
     let joinedCode = null;
 
-    socket.on("room:join", ({ code, name, gameId }) => {
+    socket.on("room:join", ({ code, name, gameId, avatar }) => {
       if (!code) return;
       code = String(code).toUpperCase();
 
