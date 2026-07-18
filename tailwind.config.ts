@@ -23,11 +23,17 @@ const config: Config = {
           "60%": { transform: "translateX(-4px)" },
           "80%": { transform: "translateX(4px)" },
         },
+        wiggle: {
+          "0%, 100%": { transform: "rotate(0deg)" },
+          "25%": { transform: "rotate(-6deg)" },
+          "75%": { transform: "rotate(6deg)" },
+        },
       },
       animation: {
         "pop-in": "pop-in 0.25s ease-out",
         float: "float 4s ease-in-out infinite",
         shake: "shake 0.4s ease-in-out",
+        wiggle: "wiggle 0.4s ease-in-out",
       },
     },
   },

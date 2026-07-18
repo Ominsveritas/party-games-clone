@@ -21,7 +21,7 @@ app.prepare().then(() => {
   io.on("connection", (socket) => {
     let joinedCode = null;
 
-    socket.on("room:join", ({ code, name, gameId }) => {
+    socket.on("room:join", ({ code, name, gameId, avatar }) => {
       if (!code) return;
       code = String(code).toUpperCase();
 
@@ -38,9 +38,14 @@ app.prepare().then(() => {
       const game = getGame(room.gameId);
       if (game && game.init) game.init(room);
 
+      const ANIMAL_EMOJIS = [
+        "🐶", "🦊", "🐸", "🦄", "🐼", "🐨", "🐯", "🦁", "🐮", "🐷",
+        "🐙", "🦋", "🐬", "🦅", "🦆", "🦉", "🐺", "🦝", "🐻", "🦜",
+      ];
       room.members.set(socket.id, {
         id: socket.id,
         name: String(name || "Guest").slice(0, 24) || "Guest",
+        avatar: ANIMAL_EMOJIS.includes(avatar) ? avatar : undefined,
       });
       socket.join(code);
       joinedCode = code;
@@ -65,6 +70,21 @@ app.prepare().then(() => {
       const member = room.members.get(socket.id);
       if (member) member.name = String(name || "Guest").slice(0, 24) || "Guest";
       io.to(joinedCode).emit("room:state", publicState(room));
+    });
+
+    socket.on("room:set-avatar", ({ avatar }) => {
+      if (!joinedCode) return;
+      const room = getRoom(joinedCode);
+      if (!room) return;
+      const member = room.members.get(socket.id);
+      const ANIMAL_EMOJIS = [
+        "🐶", "🦊", "🐸", "🦄", "🐼", "🐨", "🐯", "🦁", "🐮", "🐷",
+        "🐙", "🦋", "🐬", "🦅", "🦆", "🦉", "🐺", "🦝", "🐻", "🦜",
+      ];
+      if (member && ANIMAL_EMOJIS.includes(avatar)) {
+        member.avatar = avatar;
+        io.to(joinedCode).emit("room:state", publicState(room));
+      }
     });
 
     socket.on("disconnect", () => {

@@ -71,6 +71,7 @@ export default function Punchline({ socket, me, members, game }: GameProps) {
             p.key === myKey ? "border-pink-400/50 bg-pink-400/10" : "border-white/10 bg-white/5"
           }`}
         >
+          <span>{members.find((m) => String(m.name).trim().toLowerCase() === p.key)?.avatar ?? "🎮"}</span>
           <span className="font-semibold">{p.name}</span>
           <span className="font-mono font-bold text-pink-300">{p.score}</span>
         </div>
@@ -301,7 +302,9 @@ export default function Punchline({ socket, me, members, game }: GameProps) {
               }`}
             >
               <span className="font-bold">
-                {medals[idx] ?? `${idx + 1}.`} {p.name}
+                {medals[idx] ?? `${idx + 1}.`}{" "}
+                {members.find((m) => String(m.name).trim().toLowerCase() === p.key)?.avatar ?? "🎮"}{" "}
+                {p.name}
                 {p.key === myKey && <span className="ml-1.5 text-xs text-pink-300/70">(you)</span>}
               </span>
               <span className="font-mono font-black text-pink-300">{p.score}</span>

@@ -76,6 +76,7 @@ export default function TwoTruths({ socket, me, members, game }: GameProps) {
             p.key === myKey ? "border-orange-400/50 bg-orange-400/10" : "border-white/10 bg-white/5"
           }`}
         >
+          <span>{members.find((m) => String(m.name).trim().toLowerCase() === p.key)?.avatar ?? "🎮"}</span>
           <span className="font-semibold">
             {p.key === g.featuredKey && phase !== "collect" && "🎙️ "}
             {p.name}
@@ -176,7 +177,9 @@ export default function TwoTruths({ socket, me, members, game }: GameProps) {
           Round {(g.roundIdx ?? 0) + 1} / {g.order?.length ?? "?"}
         </p>
         <h2 className="mb-5 text-center text-2xl font-black">
-          {isFeatured ? "Your statements — look innocent 😇" : `Which is ${playerName(g.featuredKey)}'s lie?`}
+          {isFeatured
+            ? "Your statements — look innocent 😇"
+            : `Which is ${members.find((m) => String(m.name).trim().toLowerCase() === g.featuredKey)?.avatar ?? "🎮"} ${playerName(g.featuredKey)}'s lie?`}
         </h2>
         <div className="flex flex-col gap-3">
           {(g.statements ?? []).map((s, i) => {
@@ -248,8 +251,8 @@ export default function TwoTruths({ socket, me, members, game }: GameProps) {
           <div className="mt-5 text-center">
             <p className="animate-pop-in text-lg">
               {reveal?.fooled
-                ? `🎭 ${playerName(g.featuredKey)} fooled ${reveal.fooled} ${reveal.fooled === 1 ? "person" : "people"} (+${reveal.fooled * 50})`
-                : `😅 Nobody was fooled by ${playerName(g.featuredKey)}`}
+                ? `🎭 ${members.find((m) => String(m.name).trim().toLowerCase() === g.featuredKey)?.avatar ?? "🎮"} ${playerName(g.featuredKey)} fooled ${reveal.fooled} ${reveal.fooled === 1 ? "person" : "people"} (+${reveal.fooled * 50})`
+                : `😅 Nobody was fooled by ${members.find((m) => String(m.name).trim().toLowerCase() === g.featuredKey)?.avatar ?? "🎮"} ${playerName(g.featuredKey)}`}
             </p>
             {isHost && (
               <button
@@ -281,7 +284,9 @@ export default function TwoTruths({ socket, me, members, game }: GameProps) {
               }`}
             >
               <span className="font-bold">
-                {medals[idx] ?? `${idx + 1}.`} {p.name}
+                {medals[idx] ?? `${idx + 1}.`}{" "}
+                {members.find((m) => String(m.name).trim().toLowerCase() === p.key)?.avatar ?? "🎮"}{" "}
+                {p.name}
                 {p.key === myKey && <span className="ml-1.5 text-xs text-orange-300/70">(you)</span>}
               </span>
               <span className="font-mono font-black text-orange-300">{p.score}</span>

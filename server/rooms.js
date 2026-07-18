@@ -35,7 +35,7 @@ function publicState(room) {
   return {
     code: room.code,
     gameId: room.gameId,
-    members: [...room.members.values()].map((m) => ({ id: m.id, name: m.name })),
+    members: [...room.members.values()].map((m) => ({ id: m.id, name: m.name, avatar: m.avatar })),
     game: room.game,
   };
 }
