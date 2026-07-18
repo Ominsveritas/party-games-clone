@@ -284,7 +284,9 @@ export default function TwoTruths({ socket, me, members, game }: GameProps) {
               }`}
             >
               <span className="font-bold">
-                {medals[idx] ?? `${idx + 1}.`} {p.name}
+                {medals[idx] ?? `${idx + 1}.`}{" "}
+                {members.find((m) => String(m.name).trim().toLowerCase() === p.key)?.avatar ?? "🎮"}{" "}
+                {p.name}
                 {p.key === myKey && <span className="ml-1.5 text-xs text-orange-300/70">(you)</span>}
               </span>
               <span className="font-mono font-black text-orange-300">{p.score}</span>
